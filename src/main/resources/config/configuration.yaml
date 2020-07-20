@@ -1,0 +1,9 @@
+users:
+ host: "users-mule.firebaseio.com"
+ path: "/users.json"
+ 
+user:
+ user.pathById: "/user/*.json"
+ 
+http:
+ port: "8081"

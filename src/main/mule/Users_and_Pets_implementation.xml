@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="Get_All_users_data" doc:id="35d619a0-8435-48f6-a4b8-23d58e276b46" >
+		<http:request method="GET" doc:name="Request" doc:id="fc7ca75d-fbe7-448f-8c73-205d6c4932e5" config-ref="HTTP_Users" path="${users.path}" />
+		<logger level="INFO" doc:name="Logger" doc:id="76318a31-c528-4534-830f-854a8f87944b" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="23a2a4b2-369c-40b4-b4b8-b7e44676203c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Get_User_By_Id" doc:id="90b861d1-c305-4df4-9f7f-54a97c44ff69" >
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="7db2f0a8-b0bd-47e8-a763-8a29f18cce28" variableName="userId"/>
+		<logger level="INFO" doc:name="Logger" doc:id="04cc7290-e4bd-43de-8c57-e8037aa4ec0e" message="#[vars.userId]"/>
+		<http:request method="GET" doc:name="Request" doc:id="eda6ff9c-5d9d-4d50-b898-386ebae6fa31" path='#["/users/" ++ vars.userId ++".json"]' config-ref="HTTP_Users"/>
+	</flow>
+	<flow name="mashup-Flow" doc:id="883d94ca-00fa-405f-8a0a-1595cc474b75" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="42aa8ebc-8ef8-4b2d-a697-a659197431bb" >
+			<route >
+				<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="b1b37cec-0011-4873-8582-120f83de7650" variableName="userId"/>
+				<http:request method="GET" doc:name="Request_User" doc:id="47c6ce55-66cd-4f54-b8ab-639e95caffd3" path='#["/users/" ++ vars.userId ++".json"]' config-ref="HTTP_Users"/>
+				<logger level="INFO" doc:name="Logger" doc:id="6bdc00cf-9b37-4e30-b5bf-c4e8612f8c99" message='#[payload]'/>
+			</route>
+			<route >
+				<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="23e69781-a00a-4410-ba77-0ee32bfbbc2d" variableName="petId"/>
+				<http:request method="GET" doc:name="Request_Pets" doc:id="8eb7c236-1c20-4aff-bc8b-84ff2a6e98df" config-ref="HTTP_Pets" path='#["/pets/" ++ vars.petId ++".json"]'/>
+				<logger level="INFO" doc:name="Logger" doc:id="c28469fb-3a1c-42c5-9835-0f2818985c2d" message='#[payload]'/>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="843a2fdc-61db-4203-88d7-9e1d0f5f1852" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+message.payload."0".payload ++ message.payload."1".payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="fd22f122-c48e-4aa5-a060-4387ebd6f9d7" message='#[payload]'/>
+	</flow>
+</mule>

@@ -1,0 +1,105 @@
+#%RAML 1.0
+baseUri: /venkat/*
+title: Pets-users API
+version: 1.0  
+mediaType:
+  - application/json
+  - application/xml
+protocols:
+  - HTTP
+  - HTTPS
+/users:
+  get:
+    displayName: Users
+    body: {}
+    responses:
+      "200":
+        body:
+          type: !include users.raml
+          example: !include  Resources/users_response_example.raml
+  /{id}:
+    uriParameters:
+      id:
+        type: integer
+        minimum: 0
+        maximum: 9
+    displayName: user by id
+    get:
+     responses:
+      "400":
+        body:
+          application/json:
+            type: string
+            default: "Invalid ID"
+      "200":
+        body:
+          application/json:
+            type: !include user.raml
+            example: !include Resources/user_response_example.raml
+
+/pets:
+  get:
+    displayName: Pets
+    responses:
+      "200":
+        body:
+          type: !include pets.raml
+          example: !include  Resources/pets_response_example.raml
+  /{id}:
+    uriParameters:
+      id:
+        type: integer
+        minimum: 0
+        maximum: 9
+    displayName: pet by id
+    get:
+     responses:
+      "400":
+        body:
+          application/json:
+            type: string
+            default: "Invalid ID"
+      "200":
+        body:
+          application/json:
+            type: !include pet.raml
+            example: !include Resources/pet_response_example.raml
+  post:
+    body:
+     application/json:
+       type: !include pet.raml
+       example: !include Resources/pet_response_example.raml
+    responses:
+      "400":
+        body:
+          application/json:
+            type: string
+            default: "Invalid ID"
+      "201":
+        body:
+          application/json:
+            type: string
+            default: "Pet Record Inserted Successfully"
+       
+   
+/mashup:
+  /{id}:
+    uriParameters:
+      id:
+        type: integer
+        minimum: 0
+        maximum: 9
+    displayName: user by id
+    get:
+     responses:
+      "400":
+        body:
+          application/json:
+            type: string
+            default: "Invalid ID Supplied"
+      "200":
+        body:
+          application/json:
+            type: !include mashup.raml
+            example: !include Resources/mashup_response_example.raml
+

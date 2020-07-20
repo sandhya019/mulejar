@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:request-config name="HTTP_Users" doc:name="HTTP Request configuration" doc:id="b00bcde1-febd-47fa-9acd-da48c7db6b0f">
+		<http:request-connection host="${users.host}" protocol="HTTPS"/>
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="19713328-5016-4236-8cfe-acae9ebf49f1" file="config/configuration.yaml" />
+	<http:request-config name="HTTP_Pets" doc:name="HTTP Request configuration" doc:id="24822d94-fa61-4cd0-833a-9441bbc36e36" >
+		<http:request-connection host="mule-pets.firebaseio.com" protocol="HTTPS"/>
+	</http:request-config>
+</mule>
